@@ -1,0 +1,11 @@
+<mapper>
+
+	<filter
+		name="com.mwb.sample.model.Sample">
+		<property name="price" column="cssp.price" />
+		<property name="totalSoldNumber" column="cssp.total_sold_number" />
+		<property name="onShelfTime" column="cssp.on_shelf_time" />
+		<property name="havePicture" column="cssp.is_have_picture" />
+	</filter>
+
+</mapper>

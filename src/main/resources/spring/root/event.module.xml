@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://activemq.apache.org/schema/core 
+		http://activemq.apache.org/schema/core/activemq-core.xsd">
+	
+	<!-- ActiveMQ configuration -->
+	<amq:broker useJmx="false" persistent="true" schedulerSupport="true">
+		<amq:transportConnectors>
+			<amq:transportConnector uri="vm://localhost" />
+		</amq:transportConnectors>
+		
+		<amq:plugins>
+			<amq:statisticsBrokerPlugin />
+	    </amq:plugins>
+		
+		<amq:persistenceAdapter>
+		    <amq:kahaDB directory="${activemq.data.root}/${server.name}/kahaDB" />
+        </amq:persistenceAdapter>
+        
+        <amq:systemUsage>
+        	<amq:systemUsage>
+        		<amq:memoryUsage>
+        			<amq:memoryUsage limit="256 mb" />
+        		</amq:memoryUsage>
+        		<amq:storeUsage>
+        			<amq:storeUsage limit="1 gb" />
+        		</amq:storeUsage>
+        		<amq:tempUsage>
+        			<amq:tempUsage limit="1 gb" />
+        		</amq:tempUsage>
+        	</amq:systemUsage>
+        </amq:systemUsage>
+	</amq:broker>
+
+	<amq:connectionFactory id="eventFactory" brokerURL="vm://localhost">
+	    <amq:prefetchPolicy>
+	        <amq:prefetchPolicy queuePrefetch="0" topicPrefetch="0"/>
+	    </amq:prefetchPolicy>
+	</amq:connectionFactory>
+	
+	<bean id="eventConnectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory">
+		<property name="targetConnectionFactory" ref="eventFactory" />
+	</bean>
+	
+	<bean class="com.mwb.framework.event.EventManager">
+	    <property name="connectionFactory" ref="eventConnectionFactory" />
+	</bean>
+
+	<bean class="com.mwb.framework.event.EventListenerContainer"> 
+	    <property name="concurrency" value="15-20"/>  
+	    <property name="destination">
+	    	<amq:queue physicalName="694829AD7CC00A5D9293A317F4E3C8F1"/>
+	    </property>  
+	</bean>
+	
+	<bean class="com.mwb.framework.event.monitor.EventMonitor" />
+	<task
+</beans>

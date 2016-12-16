@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exports>
+	<file id="com.mwb.export.test.FooResponse"
+		name="测试文件1" >
+		<sheet name="员工列表" rows="employees">
+			<column name="部门">name</column>
+			<column name="部门">email</column>
+		</sheet>
+	</file>
+	<file id="com.mwb.export.test.BarResponse"
+		name="测试文件2" >
+		<sheet name="部门列表 " rows="departments">
+			<column name="部门">department</column>
+			<column name="部门">phone</column>
+		</sheet>
+	</file>
+</exports>

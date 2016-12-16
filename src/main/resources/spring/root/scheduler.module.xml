@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+    
+    <bean 
+        id="quartzScheduler" 
+        class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false">
+        
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+        <property name="configLocation"  value="classpath:/quartz/quartz.properties"/>
+        
+        <property name="triggers" value="#{getObject('quartzTriggers') == null ? getObject('defautlTriggers') : getObject('quartzTriggers')}" />
+    </bean>
+    
+    <util:list id="defautlTriggers" />
+    
+    <!-- job task monitor related -->
+    <bean id="jobTaskDataSource"
+			class="com.mchange.v2.c3p0.ComboPooledDataSource"
+			destroy-method="close" >
+		
+			<property name="driverClass">
+				<value>${database.driver.class}</value>
+			</property>
+				
+			<property name="jdbcUrl">
+				<value>${database.jdbc.url}</value>
+			</property>
+				
+			<property name="user">
+				<value>${database.user}</value>
+			</property>
+				
+			<property name="password">
+				<value>${database.password}</value>
+			</property>
+				
+			<property name="autoCommitOnClose">
+				<value>true</value>
+			</property>
+				
+			<property name="initialPoolSize">
+				<value>2</value>
+			</property>
+				
+			<property name="minPoolSize">
+				<value>2</value>
+			</property>
+				
+			<property name="maxPoolSize">
+				<value>30</value>
+			</property>
+		
+			<property name="maxIdleTime">
+				<value>10</value>
+			</property>
+	</bean>
+    
+    <bean 
+		id="schedulerExecutionDao" 
+		class="com.mwb.framework.scheduler.dao.JobTaskExecutionStatusDao" >
+	
+		<property name="dataSource" ref ="jobTaskDataSource" />
+		
+		<constructor-arg>
+			<value>${scheduler.job.task.execution.status.table:t_job_task_execution_status}</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean 
+		id="qzJobDetailDao" 
+		class="com.mwb.framework.scheduler.dao.QZJobDetailDao" >
+	
+		<property name="dataSource" ref ="jobTaskDataSource" />
+		
+		<constructor-arg>
+			<value>${scheduler.quartz.job.detail.table:QZ_JOB_DETAILS}</value>
+		</constructor-arg>
+	</bean>
+    
+    <bean id="jobTaskExecutionStatusHandler" class="com.mwb.framework.scheduler.monitor.JobTaskExecutionStatusHandler" />
+    
+    <bean id="jobTaskFailureHandler" class="com.mwb.framework.scheduler.quartz.JobTaskFailureHandler" />
+    
+    <bean id="jobTaskMonitorServlet" class="com.mwb.framework.scheduler.monitor.JobTaskMonitorServlet" >
+    	<property name="passwordFile">
+		    <value>${scheduler.job.task.monitor.servlet.password.file:/tmp/temp.txt}</value>
+		</property>
+    </bean>
+    
+    <bean id="jobTaskNotificationThreadPool" class="com.mwb.framework.scheduler.JobTaskNotificationThreadPool" >
+    	<constructor-arg index="0">
+			<value>${scheduler.job.task.thread.pool.number:5}</value>
+		</constructor-arg>		
+    </bean>
+    
+     <bean id="abstractStatefulJobTask" abstract="true" class="com.mwb.framework.scheduler.AbstractStatefulJobTask" >
+    	<property name="jobTaskExecutionNotifications" >
+    		<list>  
+				<ref bean="jobTaskExecutionStatusHandler" />  
+				<ref bean="jobTaskFailureHandler" />  
+			</list>  
+		</property>
+    </bean>  
+    
+</beans>

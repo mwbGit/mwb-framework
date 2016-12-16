@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/cache 
+        http://www.springframework.org/schema/cache/spring-cache-3.1.xsd
+        http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+		
+	<!-- Global ID Generator -->
+	<!-- 使用单独的dataSource，避免受到外部transaction的影响 -->
+	<bean 
+		id="abstractGlobalIdProductor" 
+		class="com.mwb.framework.gid.AbstractGlobalIdProductor"
+		parent="abstractHazelcast"
+		abstract="true">
+	
+		<property name="dataSource">
+			<bean
+				class="com.mchange.v2.c3p0.ComboPooledDataSource"
+				destroy-method="close" >
+		
+				<property name="driverClass">
+					<value>${database.driver.class}</value>
+				</property>
+				
+				<property name="jdbcUrl">
+					<value>${database.jdbc.url}</value>
+				</property>
+				
+				<property name="user">
+					<value>${database.user}</value>
+				</property>
+				
+				<property name="password">
+					<value>${database.password}</value>
+				</property>
+				
+				<property name="autoCommitOnClose">
+					<value>true</value>
+				</property>
+				
+				<property name="initialPoolSize">
+					<value>5</value>
+				</property>
+				
+				<property name="minPoolSize">
+					<value>5</value>
+				</property>
+				
+				<property name="maxPoolSize">
+					<value>30</value>
+				</property>
+		
+				<!-- fix bug 684 -->
+				<property name="maxIdleTime">
+					<value>10</value>
+				</property>
+		
+			</bean>
+		</property>
+		
+		<property name="idTable">
+			<value>${gid.table}</value>
+		</property>
+		
+		<property name="idColumn">
+		    <value>${gid.column.id}</value>
+		</property>
+		
+		<property name="nameColumn">
+		    <value>${gid.column.name}</value>
+		</property>
+		
+		<property name="valueColumn">
+		    <value>${gid.column.value}</value>
+		</property>
+		
+	</bean>
+    
+</beans>

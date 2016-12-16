@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="hazelcast" class="com.hazelcast.core.Hazelcast"
+		factory-method="newHazelcastInstance">
+		<constructor-arg>
+			<bean class="com.hazelcast.config.ClasspathXmlConfig">
+				<constructor-arg value="hazelcast/hzserver.xml" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<bean 
+		id="abstractHazelcast" 
+		class="com.mwb.framework.hazelcast.AbstractHazelcast"
+		abstract="true"
+		init-method="init">
+		
+		<property name="hazelcast" ref="hazelcast"/>
+			
+	</bean>
+</beans>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exception code="100001" class="java.lang.Exception">
+
+	<!-- 服务请求签名错误 -->
+	<exception code="900001"
+		class="com.mwb.framework.service.interceptor.exception.SignVerificationException" />
+	
+	<!-- 没有授权 -->
+	<exception code="900101"
+		class="com.mwb.framework.service.aop.security.AuthorizationFailedException">
+	
+		<exception code="900102"
+			class="com.mwb.framework.service.aop.security.NoLoginSessionException" />
+		
+		<exception code="900103"
+			class="com.mwb.framework.service.aop.security.PermissionDeniedException" />
+		
+		<exception code="900104"
+			class="com.mwb.framework.service.aop.security.LocationDeniedException" />
+	</exception>
+	
+	<exception code="900201"
+		class="com.mwb.framework.mybatis.audit.AuditException" />
+	
+</exception>

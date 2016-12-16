@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security-3.1.xsd
+		http://www.springframework.org/schema/util 
+        http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<bean id="sessionStorage"
+		class="com.mwb.framework.security.servlet.session.store.HazelcastSessionStorage">
+		
+		<property name="hazelcast" ref="hazelcast" />
+		<property name="sessionStorageName" value="${security.session.storage.name:Sessions}" />
+	</bean>
+	
+	<bean id="globalSessionManager"
+		class="com.mwb.framework.security.servlet.session.global.GlobalSessionManager">
+		
+		<property name="sessionStorage" ref="sessionStorage" />
+	</bean>
+	
+	<!-- spring security -->
+	<!-- common beans -->	
+	<bean id="securityFilterChainProxy"
+		class="com.mwb.framework.security.ConfigurableFilterChainProxy">
+		<constructor-arg value="${security.authentication.type}" />
+		<constructor-arg ref="localLoginFilterChain" />
+		<constructor-arg ref="casLoginFilterChain" />
+	</bean>
+	
+	<bean id="sessionReplaceFilter"
+		class="com.mwb.framework.security.servlet.session.SessionReplaceFilter">	
+		<property name="globalSessionManager" ref="globalSessionManager" />
+	</bean>
+		
+	<bean id="securityContextPersistenceFilter"
+		class="org.springframework.security.web.context.SecurityContextPersistenceFilter" />
+	
+	<bean id="anonymousAuthenticationFilter" 
+		class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter" >
+		<property name="key" value="8a7dc555b1c51428"/>
+  		<property name="userAttribute" value="anonymousUser, ROLE_ANONYMOUS"/>	
+	</bean>
+	
+	<bean id="accessDecisionManager"
+		class="org.springframework.security.access.vote.AffirmativeBased">
+
+		<property name="decisionVoters">
+			<list>
+				<bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- local authentication beans -->
+	<!-- need to be completed later -->
+	<util:list id="localLoginFilterChain" value-type="org.springframework.security.web.SecurityFilterChain">
+    	<security:filter-chain pattern="/**"
+			filters="
+				sessionReplaceFilter,
+				securityContextPersistenceFilter, 
+				anonymousAuthenticationFilter" />
+	</util:list>
+	
+	<!-- cas authentication beans -->
+	<util:list id="casLoginFilterChain" value-type="org.springframework.security.web.SecurityFilterChain">
+    	<security:filter-chain pattern="/**"
+			filters="
+			sessionReplaceFilter,
+			securityContextPersistenceFilter, 
+			singleSignOutFilter,
+			logoutFilter,
+			casRestAuthenticationFilter,
+			casAuthenticationFilter, 
+			anonymousAuthenticationFilter,
+			casExceptionTranslationFilter, 
+			casFilterSecurityInterceptor" />
+	</util:list>
+
+	<bean id="casRestAuthenticationFilter"
+		class="com.mwb.framework.security.cas.rest.CasRestAuthenticationFilter">
+		<property name="userDetailsService">
+			<bean class="com.mwb.framework.security.cas.rest.CasRestUserDetailService"
+				init-method="init">
+				<property name="mock" value="false" />
+				<property name="maxConnection" value="${security.cas.max.connection:10}" />
+				<property name="connectionTimeout" value="${security.cas.connection.timeout:10000}" />
+				<property name="socketTimeout" value="${security.cas.socket.timeout:10000}" />
+				<property name="serviceProperties" ref="casServiceProperties"/>
+				<property name="userDetailsBuilder" value="#{getObject('userDetailsBuilder')}" />
+			</bean>
+		</property>
+		<property name="loginSuccessHandler" value="#{getObject('applicationLoginSuccessHandler')}" />
+		<property name="sessionMappingStorage" ref="hazelcastSessionMappingStorage" />
+	</bean>
+	
+	<bean id="hazelcastSessionMappingStorage" 
+		class="com.mwb.framework.security.cas.HazelcastSessionMappingStorage" parent="abstractHazelcast">
+		<property name="sessionStorage" ref="sessionStorage"/>
+	</bean>
+	
+	<bean id="singleSignOutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter">
+		<property name="sessionMappingStorage" ref="hazelcastSessionMappingStorage"/>
+	</bean>
+	
+	<bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<constructor-arg ref="casLogoutSuccessHandler" />
+		<constructor-arg ref="securityContextLogoutHandler" />
+		<property name="filterProcessesUrl" value="${security.web.logout.url:/security/logout.html}" />
+	</bean>
+	
+	<bean id="singleSignOutHttpSessionListener" class="org.jasig.cas.client.session.SingleSignOutHttpSessionListener" />
+	
+	<bean id="securityContextLogoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+	
+	<bean id="casLogoutSuccessHandler" class="com.mwb.framework.security.cas.CasLogoutSuccessHandler">
+		<property name="serviceProperties" ref="casServiceProperties"/>
+		<property name="logoutSuccessHandler" value="#{getObject('webLogoutSuccessHandler')}" />
+	</bean> 
+	
+	<bean id="casAuthenticationFilter"
+		class="com.mwb.framework.security.cas.DefaultCasAuthenticationFilter">
+		
+		<property name="serviceProperties" ref="casServiceProperties" />
+		<property name="authenticationManager" ref="casAuthenticationManager" />
+		<property name="authenticationFailureHandler">
+			<bean
+				class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+				<property name="defaultFailureUrl" value="${security.web.authentication.failure.url:/security/failure.html}" />
+			</bean>
+		</property>
+		<property name="authenticationSuccessHandler" ref="casAuthenticationSuccessHandler" />
+	</bean>
+	
+	<bean id="casAuthenticationSuccessHandler" 
+		class="com.mwb.framework.security.cas.CasAuthenticationSuccessHandler">
+		
+		<property name="loginSuccessHandler" value="#{getObject('webLoginSuccessHandler')}" />
+		
+	</bean>
+	
+	<security:authentication-manager id="casAuthenticationManager">
+	    <security:authentication-provider ref="casAuthenticationProvider" />
+	</security:authentication-manager>
+		
+	<bean id="casAuthenticationProvider" class="com.mwb.framework.security.cas.DefaultCasAuthenticationProvider">
+		<constructor-arg>
+			<bean class="com.mwb.framework.security.cas.CasUserDetailService">
+				<property name="userDetailsBuilder" value="#{getObject('userDetailsBuilder')}" />
+			</bean>
+		</constructor-arg>
+	    <property name="serviceProperties" ref="casServiceProperties" />
+	</bean>
+	
+	<bean id="casExceptionTranslationFilter"
+		class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		<property name="authenticationEntryPoint" ref="casAuthenticationEntryPoint" />
+	</bean>
+
+	<bean id="casServiceProperties" 
+		class="com.mwb.framework.security.cas.CasServiceProperties">
+	    <property name="casServerUrl" value="${security.cas.server.url:http://192.168.1.1}"/>
+	    <property name="casClientUrl" value="${security.cas.client.url:http://192.168.1.1}"/>
+	    <property name="filterProcessesUrl" value="${security.web.login.processing.url:/777c15f4aabdab52}"/>
+	</bean>
+	
+	<bean id="casAuthenticationEntryPoint" 
+		class="com.mwb.framework.security.cas.CasAuthenticationEntryPoint">
+	    <property name="casServiceProperties" ref="casServiceProperties"/>
+	</bean>
+	
+	<bean id="casFilterSecurityInterceptor"
+		class="com.mwb.framework.security.cas.CasFilterSecurityInterceptor">
+		<property name="accessDecisionManager" ref="accessDecisionManager" />
+		<property name="securityMetadataSource" ref="securityMetadataSource" />
+	</bean>
+
+</beans>

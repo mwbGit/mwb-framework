@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+  
+    <bean id="taskDataSource"
+			class="com.mchange.v2.c3p0.ComboPooledDataSource"
+			destroy-method="close" >
+		
+			<property name="driverClass">
+				<value>${database.driver.class}</value>
+			</property>
+				
+			<property name="jdbcUrl">
+				<value>${database.jdbc.url}</value>
+			</property>
+				
+			<property name="user">
+				<value>${database.user}</value>
+			</property>
+				
+			<property name="password">
+				<value>${database.password}</value>
+			</property>
+				
+			<property name="autoCommitOnClose">
+				<value>true</value>
+			</property>
+				
+			<property name="initialPoolSize">
+				<value>2</value>
+			</property>
+				
+			<property name="minPoolSize">
+				<value>2</value>
+			</property>
+				
+			<property name="maxPoolSize">
+				<value>30</value>
+			</property>
+		
+			<property name="maxIdleTime">
+				<value>10</value>
+			</property>
+	</bean>
+    
+    <bean 
+		id="taskDao" 
+		class="com.mwb.framework.task.dao.TaskDao" >
+		<property name="dataSource" ref ="taskDataSource" />
+	</bean>
+	
+    <bean id="taskManager"
+		class="com.mwb.framework.task.handler.TaskManager" init-method="init"/>
+		
+    <bean id="abstractTaskEventHander" class="com.mwb.framework.task.handler.AbstractTaskEventHander"  
+	    abstract="true" /> 
+	    
+</beans>

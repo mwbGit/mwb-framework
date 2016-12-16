@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:cxf="http://cxf.apache.org/core" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://cxf.apache.org/core 
+		http://cxf.apache.org/schemas/core.xsd
+		http://cxf.apache.org/jaxws 
+		https://cxf.apache.org/schemas/jaxws.xsd
+		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<cxf:bus>
+		<cxf:inInterceptors><ref bean="signVerificationInInterceptor"/></cxf:inInterceptors>
+		<cxf:outInterceptors><ref bean="signVerificationOutInterceptor"/></cxf:outInterceptors>
+		<cxf:properties>
+            <entry key="javax.ws.rs.ext.ExceptionMapper" value-ref="exceptionMapperProvider"/>
+        </cxf:properties>
+	</cxf:bus>
+
+	<!-- all providers -->
+	<bean id="jacksonJaxbJsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider" />
+	<bean id="multipartProvider" class="org.apache.cxf.jaxrs.provider.MultipartProvider" />
+	<bean id="exceptionMapperProvider" class="com.mwb.framework.service.provider.ExceptionMapperProvider" />
+	
+	<!-- jsonp interceptor -->
+	<bean id="defaultJsonpInInterceptor" class="com.mwb.framework.service.interceptor.jsonp.DefaultJsonpInInterceptor" />
+	<bean id="defaultJsonpJaxrsWriterInterceptor" class="com.mwb.framework.service.interceptor.jsonp.DefaultJsonpJaxrsWriterInterceptor" />
+	<bean id="defaultJsonpPostStreamInterceptor" class="com.mwb.framework.service.interceptor.jsonp.DefaultJsonpPostStreamInterceptor" />
+	<bean id="defaultJsonpPreStreamInterceptor" class="com.mwb.framework.service.interceptor.jsonp.DefaultJsonpPreStreamInterceptor" />
+	
+	<!-- sign interceptor -->
+	<bean id="signVerificationInInterceptor" class="com.mwb.framework.service.interceptor.sign.SignVerificationInInterceptor" />
+	<bean id="signVerificationOutInterceptor" class="com.mwb.framework.service.interceptor.sign.SignVerificationOutInterceptor" />
+	
+	<bean id="headerOutInterceptor" class="com.mwb.framework.service.interceptor.header.HeaderOutInterceptor" />
+	
+	<bean class="com.mwb.framework.service.StatusCodeManager">
+		<property name="basenames" value="#{getObject('statusCodes')}" />
+		<property name="configFile" value="classpath:code/exceptions.xml" />
+	</bean>
+
+	<bean id="serviceInvocationAuthorizer" class="com.mwb.framework.service.aop.security.ServiceInvocationAuthorizer" >
+		<property name="serviceLocationAuthorizer" value="#{getObject('serviceLocationAuthorizer')}" />
+	</bean>
+
+	<bean id="requestNormalizer" class="com.mwb.framework.service.aop.normalize.RequestNormalizer" />
+
+	<bean id="requestValidator" class="com.mwb.framework.service.aop.validate.RequestValidator" />
+
+	<bean id="preRestServiceHandler" class="com.mwb.framework.service.aop.PreRestServiceHandler">
+		<property name="authorizer" ref="serviceInvocationAuthorizer" />
+		<property name="normalizer" ref="requestNormalizer" />
+		<property name="requestValidator" ref="requestValidator" />
+	</bean>
+	
+	<bean id="restServiceAspect" class="com.mwb.framework.service.aop.RestServiceAspect">
+		<property name="preRestServiceHandler" ref="preRestServiceHandler" />
+	</bean>
+
+	<aop:config proxy-target-class="true">
+		<aop:aspect id="restAspect" ref="restServiceAspect" order="100">
+			<aop:pointcut id="restService" expression="execution(public * com.mwb..*.service..*.*Service.*(..)) || execution(public * com.mwb..*.webapp..*.*Service.*(..))" />
+			<aop:around pointcut-ref="restService" method="doAround" />
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="abstractBaseService"
+		class="com.mwb.framework.service.api.AbstractBaseService"
+		abstract="true" />
+		
+</beans>
