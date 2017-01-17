@@ -1,7 +1,6 @@
 package com.mwb.framework.model.filter;
 
-
-import com.mwb.framework.api.common.model.PagingData;
+import com.mwb.framework.api.model.PagingData;
 
 import java.util.List;
 

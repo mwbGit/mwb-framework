@@ -1,4 +1,4 @@
-package com.mwb.framework.api.common.jms;
+package com.mwb.framework.api.jms;
 
 import org.apache.commons.lang.StringUtils;
 

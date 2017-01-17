@@ -1,8 +1,8 @@
-package com.mwb.framework.api.common.jms;
-
-import java.io.Serializable;
+package com.mwb.framework.api.jms;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
+import java.io.Serializable;
 
 public abstract class AbstractMessage implements Serializable {
 	private static final long serialVersionUID = 1L;

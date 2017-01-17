@@ -1,8 +1,8 @@
 package com.mwb.framework.security.cas;
 
 import com.alibaba.fastjson.JSON;
-import com.mwb.framework.api.common.http.ContentType;
-import com.mwb.framework.api.common.service.rs.api.ServiceResponse;
+import com.mwb.framework.api.http.ContentType;
+import com.mwb.framework.api.service.rs.api.ServiceResponse;
 import com.mwb.framework.context.RequestContextAccessor;
 import com.mwb.framework.log.Log;
 import com.mwb.framework.util.HttpUtility;

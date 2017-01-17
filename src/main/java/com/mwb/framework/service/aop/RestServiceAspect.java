@@ -1,6 +1,6 @@
 package com.mwb.framework.service.aop;
 
-import com.mwb.framework.api.common.service.rs.api.ServiceResponse;
+import com.mwb.framework.api.service.rs.api.ServiceResponse;
 import com.mwb.framework.datasource.ReadOnlyDS;
 import com.mwb.framework.datasource.ReadOnlyDataSourceHolder;
 import com.mwb.framework.log.Log;

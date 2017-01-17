@@ -10,14 +10,9 @@
     <version>1.0</version>
     <name>mwb-framework</name>
 
-    <modules>
-        <module>api</module>
-    </modules>
-
     <properties>
         <build.version>1.0</build.version>
         <junit.version>4.10</junit.version>
-        <andriod.APKParser.version>1.0</andriod.APKParser.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <cglib.version>2.2.2</cglib.version>
         <com.alibaba.fastjson>1.1.36</com.alibaba.fastjson>
@@ -49,8 +44,6 @@
         <org.springframework.security.version>3.1.0.RELEASE</org.springframework.security.version>
         <poi.version>3.8</poi.version>
         <poi-ooxml.version>3.8</poi-ooxml.version>
-        <pinyin4j.version>2.5.0</pinyin4j.version>
-        <simplecaptcha-java6.version>1.2.1</simplecaptcha-java6.version>
         <simplelatlng.version>1.0.1</simplelatlng.version>
         <xom.verson>1.2.5</xom.verson>
 
@@ -83,21 +76,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.mwb</groupId>
-            <artifactId>mwb-framework-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>andriod</groupId>
-            <artifactId>APKParser</artifactId>
-            <version>${andriod.APKParser.version}</version>
         </dependency>
 
         <dependency>
@@ -441,18 +422,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-cas</artifactId>
             <version>${org.springframework.security.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>pinyin4j</groupId>
-            <artifactId>pinyin4j</artifactId>
-            <version>${pinyin4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>simplecaptcha</groupId>
-            <artifactId>simplecaptcha-java6</artifactId>
-            <version>${simplecaptcha-java6.version}</version>
         </dependency>
 
         <dependency>

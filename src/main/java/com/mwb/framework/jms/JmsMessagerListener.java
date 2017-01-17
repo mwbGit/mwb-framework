@@ -1,6 +1,6 @@
 package com.mwb.framework.jms;
 
-import com.mwb.framework.api.common.jms.*;
+import com.mwb.framework.api.jms.*;
 import com.mwb.framework.log.Log;
 import com.mwb.framework.util.ReflectionUtility;
 import org.apache.activemq.command.ActiveMQQueue;

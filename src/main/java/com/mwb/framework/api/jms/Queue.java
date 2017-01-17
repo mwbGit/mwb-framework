@@ -1,4 +1,4 @@
-package com.mwb.framework.api.common.jms;
+package com.mwb.framework.api.jms;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,6 +1,6 @@
 package com.mwb.framework.service.aop.normalize;
 
-import com.mwb.framework.api.common.service.aop.annotation.IgnoreNormalize;
+import com.mwb.framework.api.service.aop.annotation.IgnoreNormalize;
 import com.mwb.framework.log.Log;
 import com.mwb.framework.service.aop.PreRestServiceHandler;
 import com.mwb.framework.util.DataValidator;

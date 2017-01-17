@@ -1,7 +1,7 @@
 package com.mwb.framework.service;
 
 import com.alibaba.fastjson.JSON;
-import com.mwb.framework.api.common.service.rs.api.ServiceResponse;
+import com.mwb.framework.api.service.rs.api.ServiceResponse;
 import com.mwb.framework.log.Log;
 import com.mwb.framework.service.api.exception.IExceptionMapper;
 import com.mwb.framework.service.api.exception.ParamedException;

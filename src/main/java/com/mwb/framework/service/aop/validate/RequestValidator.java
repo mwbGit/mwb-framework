@@ -1,8 +1,8 @@
 package com.mwb.framework.service.aop.validate;
 
-import com.mwb.framework.api.common.model.PagingData;
-import com.mwb.framework.api.common.service.aop.annotation.IgnoreValidate;
-import com.mwb.framework.api.common.service.rs.api.PagingRequest;
+import com.mwb.framework.api.model.PagingData;
+import com.mwb.framework.api.service.aop.annotation.IgnoreValidate;
+import com.mwb.framework.api.service.rs.api.PagingRequest;
 import com.mwb.framework.log.Log;
 import com.mwb.framework.service.aop.PreRestServiceHandler;
 import com.mwb.framework.service.aop.validate.field.*;

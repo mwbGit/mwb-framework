@@ -1,4 +1,4 @@
-package com.mwb.framework.api.common.http;
+package com.mwb.framework.api.http;
 
 public class Accept {
 

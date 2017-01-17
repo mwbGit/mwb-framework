@@ -1,11 +1,12 @@
-package com.mwb.framework.api.common.service.aop.annotation;
+package com.mwb.framework.api.jms;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IgnoreValidate {
+public @interface Topic {
+	String address();
 }

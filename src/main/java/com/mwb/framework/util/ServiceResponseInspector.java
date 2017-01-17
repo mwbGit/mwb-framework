@@ -1,6 +1,6 @@
 package com.mwb.framework.util;
 
-import com.mwb.framework.api.common.service.rs.api.ServiceResponse;
+import com.mwb.framework.api.service.rs.api.ServiceResponse;
 import com.mwb.framework.service.StatusCodeManager;
 
 public class ServiceResponseInspector {

@@ -1,8 +1,7 @@
-package com.mwb.framework.api.common.service.rs.api;
-
-import java.io.Serializable;
+package com.mwb.framework.api.service.rs.api;
 
 import javax.xml.bind.annotation.XmlElement;
+import java.io.Serializable;
 
 
 public class ServiceResponse implements Serializable {

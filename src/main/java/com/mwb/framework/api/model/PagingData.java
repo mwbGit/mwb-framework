@@ -1,4 +1,4 @@
-package com.mwb.framework.api.common.model;
+package com.mwb.framework.api.model;
 
 
 public class PagingData {

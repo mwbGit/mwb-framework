@@ -1,9 +1,8 @@
 package com.mwb.framework.jms;
 
-
-import com.mwb.framework.api.common.jms.Path;
-import com.mwb.framework.api.common.jms.Queue;
-import com.mwb.framework.api.common.jms.Topic;
+import com.mwb.framework.api.jms.Path;
+import com.mwb.framework.api.jms.Queue;
+import com.mwb.framework.api.jms.Topic;
 import com.mwb.framework.util.ReflectionUtility;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;

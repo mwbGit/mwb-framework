@@ -1,6 +1,6 @@
-package com.mwb.framework.api.common.service.rs.api;
+package com.mwb.framework.api.service.rs.api;
 
-import com.mwb.framework.api.common.model.PagingResult;
+import com.mwb.framework.api.model.PagingResult;
 
 
 public class PagingResponse extends ServiceResponse {

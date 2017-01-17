@@ -1,4 +1,4 @@
-package com.mwb.framework.api.common.service.rs.api;
+package com.mwb.framework.api.service.rs.api;
 
 import javax.xml.bind.annotation.XmlElement;
 
